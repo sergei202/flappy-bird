@@ -6,6 +6,7 @@ export class Pipe {
 	vel:P5.Vector;
 	width = 100;
 	gap:number;
+	text = '';
 
 	constructor(pos:P5.Vector, gap=100) {
 		this.pos = pos;
@@ -20,6 +21,7 @@ export class Pipe {
 		var bot = this.bottomRect;
 		p5.rect(top.x,top.y, top.w,top.h);
 		p5.rect(bot.x,bot.y, bot.w,bot.h);
+		if(this.text) p5.text(this.text, bot.x+this.width+10, p5.height-10);
 	}
 
 	get topRect() {
