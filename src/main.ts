@@ -30,9 +30,6 @@ new P5((p5:P5) => {
 		// Single player
 		player = new Bird(p5.createVector(25, p5.height/2+50));
 		player.player = true;
-		p5.keyPressed = () => {
-			if(p5.keyCode===32) player.flap();
-		};
 
 		// Create pipes
 		var spacing = 150;
@@ -44,7 +41,7 @@ new P5((p5:P5) => {
 			var pipe = new Pipe(p5.createVector(x,height), Math.max(100, 300-i*5));
 			pipe.text = '#'+(i+1);
 			pipes.push(pipe);
-			spacing--;
+			spacing -= 0.5;
 		}
 
 		statsEl = p5.createP();
@@ -55,7 +52,6 @@ new P5((p5:P5) => {
 	p5.draw = () => {
 		p5.translate(-xOffset,0);
 		p5.background(0);
-		// birds[0].pos.set(p5.mouseX,p5.mouseY);
 		pipes.forEach(pipe => pipe.draw());
 		
 		if(!pop) return;
