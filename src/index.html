@@ -1,11 +1,70 @@
 <html>
 <head>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 	<script src="/main.bundle.js"></script>
 	<style>
 		html,body {padding:0; margin:0;}
 	</style>
 </head>
 <body>
+	<div id="canvas"></div>
+	<div class="container controls mt-2">
+		<div class="row">
+			<div class="col-4">
+				<table class="table table-sm">
+					<tr>
+						<td>Generation:</td>
+						<td class="text-right" id="generation"></td>
+					</tr>
+					<tr>
+						<td>Birds Alive:</td>
+						<td class="text-right" id="alive"></td>
+					</tr>
+					<tr>
+						<td>Current Score:</td>
+						<td class="text-right" id="score"></td>
+					</tr>
+					<tr>
+						<td>Best Score:</td>
+						<td class="text-right" id="bestScore"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-4 form-group">
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Population Size:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="1" max="1000" id="popSize">
+				</div>
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Mutation Rate:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="0" max="1" step="0.05" id="mutRate">
+				</div>
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Mutation Amount:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="0" max="1" step="0.05" id="mutSize">
+				</div>
+				<div class="text-center">
+						<button class="btn btn-success" id="pauseBtn">Pause</button>
+						<button class="btn btn-warning" id="restartBtn">Restart</button>
+					</div>
+			</div>
+			<div class="col-4 form-group">
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Bird Speed:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="1" max="100" id="speed">
+				</div>
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Bird Gravity:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="0" max="10" step="0.1" id="gravity">
+				</div>
+				<div class="row">
+					<label class="col-6 col-form-label text-right">Bird Lift:</label>
+					<input type="number" class="form-control form-control-sm text-right col-6" min="0" max="10" step="0.1" id="lift">
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

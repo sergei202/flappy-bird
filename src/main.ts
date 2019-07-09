@@ -7,25 +7,37 @@ import { Dna }			from './dna';
 import { Population }	from './population';
 
 declare const p5:P5;
+declare const $:any;
 const globalAny:any = global;
 
+
+const pipes:Pipe[] = [];
+var pop:Population;
+var player:Bird;
+var controls = {
+	popSize: 100,
+	mutRate: 0.01,
+	mutSize: 0.1,
+	speed: 5,
+	gravity: 0.5,
+	lift: 5,
+	paused: false
+};
+
 new P5((p5:P5) => {
-	const pipes:Pipe[] = [];
-	var pop:Population;
-	var player:Bird;
-
-	var statsEl:P5.Element;
-	// var popSizeSlider:P5.Element;
-
 	tf.setBackend('cpu');
 
 	p5.setup = () => {
-		p5.createCanvas(p5.windowWidth, 600);
+		var canvas = p5.createCanvas(p5.windowWidth, p5.windowHeight-180);
+		canvas.parent('canvas');
 		p5.background(0);
 		globalAny.p5 = p5;			// Hacky way to make p5 global...
 		globalAny.tf = tf;
 
-		pop = new Population(100);
+		setControls(controls);
+		pop = new Population(controls.popSize);
+		pop.mutationRate = controls.mutRate;
+		pop.mutationSize = controls.mutSize;
 
 		// Single player
 		player = new Bird(p5.createVector(25, p5.height/2+50));
@@ -44,8 +56,11 @@ new P5((p5:P5) => {
 			spacing -= 0.5;
 		}
 
-		statsEl = p5.createP();
-		// popSizeSlider = p5.createSlider(1,100, 10);
+		$('#restartBtn').click(() => restart());
+		$('#pauseBtn').click(() => {
+			if(controls.paused) p5.loop(); else p5.noLoop();
+			controls.paused = !controls.paused;
+		});
 	};
 
 	var xOffset = 0;
@@ -67,21 +82,16 @@ new P5((p5:P5) => {
 			player.checkCollidePipes(pipes);
 		}
 
+		var bestBird = pop.birds.sort((a,b) => b.pos.x-a.pos.x)[0];
+		if(bestBird.pos.x>pop.bestDist) pop.bestDist = bestBird.pos.x;
+
 		p5.push();
 		p5.stroke(255,0,0);
 		p5.line(pop.bestDist,0, pop.bestDist,p5.height);
 		p5.pop();
 
-		var bestBird = pop.birds.sort((a,b) => b.pos.x-a.pos.x)[0];
-		if(bestBird.pos.x>pop.bestDist) pop.bestDist = bestBird.pos.x;
-
 		if(pop.birds.every(b => !b.alive) && (!player || !player.alive)) {
-			pop.calcFitness();
-			console.log('best dna: %o', pop.birds.sort((a,b) => b.pos.x-a.pos.x)[0].dna.values);
-			// pop.size = +popSizeSlider.value();
-			pop.nextGen();
-			if(player) player.reset();
-			
+			restart();
 		}
 
 		var aliveBirds = pop.birds.concat(player).filter(b => b.alive);
@@ -89,17 +99,60 @@ new P5((p5:P5) => {
 		xOffset = avgBirdX-100;
 
 		var stats = {
+			generation: pop.generation,
 			birds: pop.size,
 			alive: aliveBirds.length,
-			bestCur: bestBird.pos.x,
-			bestEver: pop.bestDist
+			score: bestBird.pos.x,
+			best: pop.bestDist
 		};
-		var html = '';
-		html += `gen: ${pop.generation}<br>`;
-		html += `birds: ${stats.birds}<br>`;
-		html += `alive: ${stats.alive}<br>`;
-		html += `current best: ${stats.bestCur}<br>`;
-		html += `best ever: ${stats.bestEver}<br>`;
-		statsEl.html(html);
+		setStats(stats);
 	};
 });
+
+function restart() {
+	pop.calcFitness();
+	// console.log('best dna: %o', pop.birds.sort((a,b) => b.pos.x-a.pos.x)[0].dna.values);
+	controls = getControls();
+	pop.size = controls.popSize;
+	pop.mutationRate = controls.mutRate;
+	pop.mutationSize = controls.mutSize;
+	pop.nextGen();
+	pop.birds.concat(player).forEach(bird => {
+		bird.speed = controls.speed;
+		bird.gravity = controls.gravity;
+		bird.lift = controls.lift;
+		bird.reset();
+	});
+	if(player) player.reset();
+	p5.loop();
+}
+
+
+function setStats(stats:any) {
+	$('#generation').text(stats.generation);
+	$('#alive').text(stats.alive);
+	$('#score').text(stats.score);
+	$('#bestScore').text(stats.best);
+}
+
+function setControls(controls:any) {
+	$('#popSize').val(controls.popSize);
+	$('#mutRate').val(controls.mutRate);
+	$('#mutSize').val(controls.mutSize);
+	$('#speed').val(controls.speed);
+	$('#gravity').val(controls.gravity);
+	$('#lift').val(controls.lift);
+}
+
+function getControls() {
+	var controls = {
+		popSize: +$('#popSize').val(),
+		mutRate: +$('#mutRate').val(),
+		mutSize: +$('#mutSize').val(),
+		speed:   +$('#speed').val(),
+		gravity: +$('#gravity').val(),
+		lift:    +$('#lift').val(),
+		paused: false
+	};
+	return controls;
+}

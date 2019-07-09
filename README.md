@@ -1,5 +1,8 @@
 # Flappy Bird
 
+![Screenshot](https://sergei202.com/flappy-bird/screenshot.png "Screenshot")
+
+
 This is a simple demo that uses neuro-evolution to how to play Flappy Bird.
 
 The genetic algorithm uses basic crossover and a mutation rate of 1%.
@@ -13,7 +16,7 @@ TensorFlow.js controls the NN:
 ## Demo
 https://sergei202.com/flappy-bird/
 
-You can also use the spacebar to try to beat the network!
+You can also use the space bar to try to beat the network!
 
 
 ## Run

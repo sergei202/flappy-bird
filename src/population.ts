@@ -7,6 +7,8 @@ export class Population {
 	birds:Bird[];
 	generation = 1;
 	bestDist = 0;
+	mutationRate = 0.01;
+	mutationSize = 0.1;
 
 	constructor(public size:number) {
 		this.createBirds();
@@ -22,18 +24,20 @@ export class Population {
 	nextGen() {
 		this.generation++;
 		this.calcNormFitness();
-		var newDnas = this.birds.map(entity => {
+		var newDnas = this.birds.map(bird => {
 			var a = this.randomWeighted();
 			var b = this.randomWeighted();
 			// console.log('nextGen: a=%o, b=%o', a,b);
 			var dna = Dna.crossover(a.dna,b.dna);
-			dna.mutate(0.01, 0.1);
+			dna.mutate(this.mutationRate, this.mutationSize);
 			return dna;
 		});
 		this.createBirds();
 		this.birds.forEach((bird,i) => {
-			bird.dna = newDnas[i];
-			bird.applyDna();
+			if(newDnas[i]) {		// This won't exist for some if population was resized
+				bird.dna = newDnas[i];
+				bird.applyDna();
+			}
 		});
 	}
 
